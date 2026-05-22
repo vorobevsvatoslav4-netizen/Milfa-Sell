@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint --cache -f json --quiet .",
 "preview": "bun run build && vite preview --host 0.0.0.0 --port ${PORT:-4173}",
-"prepare": "bun .bootstrap.js || true",
+"prepare": "bun .bootstrap.js || true"
 },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
