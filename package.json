@@ -79,13 +79,11 @@
     "tw-animate-css": "^1.3.5",
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",
-    "wrangler": "4.39.0",
     "zod": "^4.0.5",
     "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.12.4",
-    "@cloudflare/workers-types": "4.20250424.0",
     "@eslint/js": "^9.22.0",
     "@types/node": "^22.15.3",
     "@types/react": "^18.3.1",
