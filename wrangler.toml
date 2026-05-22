@@ -1,6 +1,7 @@
 name = "milfa-sell-1"
 main = "worker/index.ts"
 compatibility_date = "2025-05-22"
+pages_build_output_dir = "./dist/client"
 
 [assets]
 directory = "./dist/client"
