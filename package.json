@@ -9,7 +9,6 @@
     "lint": "eslint --cache -f json --quiet .",
 "preview": "bun run build && vite preview --host 0.0.0.0 --port ${PORT:-4173}",
 "prepare": "bun .bootstrap.js || true",
-"postinstall": "npm install --legacy-peer-deps"
 },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
