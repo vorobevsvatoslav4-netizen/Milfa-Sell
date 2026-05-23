@@ -28,15 +28,15 @@ function NavbarContent() {
   ], [userExists]);
   return (
     <>
-    <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-      <Link to="/" className="flex items-center gap-2 md:gap-3 group shrink-0">
+    <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:px-6 lg:px-8">
+      <Link to="/" className="flex min-w-0 items-center gap-2 md:gap-3 group shrink">
         <motion.div
           whileHover={{ rotate: -5, scale: 1.05 }}
           className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-xl md:rounded-2xl bg-telegram shadow-lg shadow-primary/20 transition-all duration-300 group-hover:shadow-primary/40"
         >
           <Shield className="h-4 w-4 md:h-5 md:w-5 text-white" />
         </motion.div>
-        <span className="text-lg md:text-xl font-display font-black tracking-tight text-foreground transition-opacity group-hover:opacity-80">
+        <span className="max-w-[128px] truncate text-base md:max-w-none md:text-xl font-display font-black tracking-tight text-foreground transition-opacity group-hover:opacity-80">
           Milfa Sell
         </span>
       </Link>
@@ -75,8 +75,8 @@ function NavbarContent() {
           )
         ))}
       </nav>
-      <div className="flex items-center gap-2 md:gap-3">
-        <ThemeToggle className="relative top-0 right-0 hover:bg-accent rounded-lg md:rounded-xl h-9 w-9 md:h-10 md:w-10 transition-colors" />
+      <div className="flex shrink-0 items-center gap-2 md:gap-3">
+        <ThemeToggle className="relative top-0 right-0 rounded-xl h-10 w-10 border border-border bg-card/70 hover:bg-accent transition-colors" />
         {userExists ? (
           <div className="flex items-center gap-1.5 md:gap-2">
             <Link to="/profile" className="hidden xs:block">
@@ -90,9 +90,10 @@ function NavbarContent() {
               variant="outline"
               size="icon"
               onClick={handleLogout}
-              className="rounded-lg md:rounded-xl h-9 w-9 md:h-10 md:w-10 border-border hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all"
+              className="rounded-xl h-10 w-10 border-border bg-card/70 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all"
+              aria-label="Выйти"
             >
-              <LogOut className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <LogOut className="h-4 w-4" />
             </Button>
           </div>
         ) : (
