@@ -16,6 +16,7 @@ type RuntimeEnv = Env & {
   CRYPTO_PAY_API_URL?: string;
   TELEGRAM_CODE_BRIDGE_URL?: string;
   TELEGRAM_CODE_BRIDGE_TOKEN?: string;
+  ADMIN_PASSWORD?: string;
   ASSETS: Fetcher;
 };
 
@@ -69,6 +70,22 @@ function bad(error: string): Response {
 
 function notFound(error = "not found"): Response {
   return json({ success: false, error }, 404);
+}
+
+function unauthorized(error = "Unauthorized"): Response {
+  return json({ success: false, error }, 401);
+}
+
+function getAdminPassword(env: RuntimeEnv): string | null {
+  return typeof env.ADMIN_PASSWORD === "string" && env.ADMIN_PASSWORD.trim()
+    ? env.ADMIN_PASSWORD.trim()
+    : null;
+}
+
+function isAdminAuthorized(request: Request, env: RuntimeEnv): boolean {
+  const password = getAdminPassword(env);
+  if (!password) return false;
+  return request.headers.get("x-admin-password") === password;
 }
 
 function pageLimit(value: string | null): number {
@@ -434,6 +451,15 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
   if (request.method === "OPTIONS") return json({});
   if (request.method === "GET" && pathname === "/api/health") {
     return ok({ status: "healthy", timestamp: new Date().toISOString() });
+  }
+  if (request.method === "POST" && pathname === "/api/admin/login") {
+    const body = await readJson(request);
+    return body.password === getAdminPassword(env)
+      ? ok({ authenticated: true })
+      : unauthorized("Invalid admin password");
+  }
+  if ((pathname.startsWith("/api/admin/") || pathname === "/api/users") && !isAdminAuthorized(request, env)) {
+    return unauthorized("Admin authorization required");
   }
   if (request.method === "POST" && pathname === "/api/client-errors") {
     const body = await readJson(request);

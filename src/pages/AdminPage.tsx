@@ -16,6 +16,14 @@ import { APP_CONFIG, COUNTRY_CODES, CATEGORIES_RUS } from '@/lib/constants';
 import type { User, TelegramAccount, Transaction } from '@shared/types';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+const ADMIN_PASSWORD_STORAGE_KEY = 'milfa_admin_password';
+const adminRequest = (init: RequestInit = {}): RequestInit => ({
+  ...init,
+  headers: {
+    ...((init.headers as Record<string, string> | undefined) || {}),
+    'x-admin-password': sessionStorage.getItem(ADMIN_PASSWORD_STORAGE_KEY) || '',
+  },
+});
 const getFlagEmoji = (countryCode?: string) => {
   const flags: Record<string, string> = {
     'US': '🇺🇸', 'GB': '🇬🇧', 'DE': '🇩🇪', 'RU': '🇷🇺', 'NL': '🇳🇱',
@@ -50,9 +58,9 @@ export function AdminPage() {
     setLoading(true);
     try {
       const [uRes, aRes, tRes] = await Promise.all([
-        api<{ items: User[] }>('/api/admin/users'),
-        api<{ items: TelegramAccount[] }>('/api/admin/accounts'),
-        api<{ items: Transaction[] }>('/api/admin/transactions')
+        api<{ items: User[] }>('/api/admin/users', adminRequest()),
+        api<{ items: TelegramAccount[] }>('/api/admin/accounts', adminRequest()),
+        api<{ items: Transaction[] }>('/api/admin/transactions', adminRequest())
       ]);
       setUsers(uRes.items || []);
       setAccounts(aRes.items || []);
@@ -64,25 +72,32 @@ export function AdminPage() {
     }
   }, [isAuthenticated]);
   useEffect(() => {
-    const saved = localStorage.getItem('milfa_admin_auth');
-    if (saved === 'true') setIsAuthenticated(true);
+    const saved = sessionStorage.getItem(ADMIN_PASSWORD_STORAGE_KEY);
+    if (saved) setIsAuthenticated(true);
   }, []);
   useEffect(() => {
     if (isAuthenticated) fetchAdminData();
   }, [isAuthenticated, fetchAdminData]);
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === APP_CONFIG.adminPassword) {
+    setLoading(true);
+    try {
+      await api('/api/admin/login', {
+        method: 'POST',
+        body: JSON.stringify({ password })
+      });
+      sessionStorage.setItem(ADMIN_PASSWORD_STORAGE_KEY, password);
       setIsAuthenticated(true);
-      localStorage.setItem('milfa_admin_auth', 'true');
       toast.success('Доступ предоставлен');
-    } else {
+    } catch {
       toast.error('Неверный пароль');
+    } finally {
+      setLoading(false);
     }
   };
   const handleLogout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('milfa_admin_auth');
+    sessionStorage.removeItem(ADMIN_PASSWORD_STORAGE_KEY);
   };
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,10 +107,10 @@ export function AdminPage() {
     }
     try {
       const countryCode = (COUNTRY_CODES as Record<string, string>)[newAccount.country || 'Россия'] || 'RU';
-      await api('/api/admin/accounts', {
+      await api('/api/admin/accounts', adminRequest({
         method: 'POST',
         body: JSON.stringify({ ...newAccount, price: Number(newAccount.price), countryCode })
-      });
+      }));
       toast.success('Аккаунт добавлен');
       setNewAccount({
         category: 'New',
@@ -149,10 +164,10 @@ export function AdminPage() {
       return;
     }
     try {
-      const res = await api<{ count: number }>('/api/admin/accounts/bulk', {
+      const res = await api<{ count: number }>('/api/admin/accounts/bulk', adminRequest({
         method: 'POST',
         body: JSON.stringify({ accounts: accountsToCreate })
-      });
+      }));
       toast.success(`Импортировано аккаунтов: ${res.count}`);
       setBulkAccountsText('');
       fetchAdminData();
@@ -163,7 +178,7 @@ export function AdminPage() {
   const handleDeleteAccount = async (id: string) => {
     if (!confirm('Удалить этот аккаунт?')) return;
     try {
-      await api(`/api/admin/accounts/${id}`, { method: 'DELETE' });
+      await api(`/api/admin/accounts/${id}`, adminRequest({ method: 'DELETE' }));
       toast.success('Аккаунт удален');
       fetchAdminData();
     } catch (err: any) {
@@ -178,10 +193,10 @@ export function AdminPage() {
     }
     setIsUpdatingBalance(true);
     try {
-      await api('/api/admin/users/update-balance', {
+      await api('/api/admin/users/update-balance', adminRequest({
         method: 'POST',
         body: JSON.stringify({ email, amount })
-      });
+      }));
       toast.success('Баланс обновлен');
       setEditingUserId(null);
       fetchAdminData();
@@ -214,7 +229,9 @@ export function AdminPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <Button type="submit" className="w-full h-16 rounded-2xl text-lg font-black bg-telegram shadow-lg">Войти</Button>
+                <Button type="submit" className="w-full h-16 rounded-2xl text-lg font-black bg-telegram shadow-lg" disabled={loading}>
+                  {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Войти'}
+                </Button>
               </form>
             </div>
           </Card>

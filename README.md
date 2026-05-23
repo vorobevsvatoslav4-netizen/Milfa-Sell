@@ -65,12 +65,34 @@ The project follows a modular architecture:
 
 This project is optimized for Cloudflare Workers and can be deployed instantly using the Aurelia deployment pipeline.
 
+Important: deploy this repository as a Cloudflare Worker, not as a Pages-only static site. The Worker entrypoint in `worker/index.ts` serves `/api/*` routes and falls back to the built Vite assets from `dist`.
+
 ### Manual Deployment
 
 To deploy your application manually to Cloudflare:
 
 ```bash
 bun run deploy
+```
+
+The deploy command builds the frontend first, then runs `wrangler deploy`. After deployment, verify the API with:
+
+```bash
+curl https://milfasell.online/api/health
+```
+
+Before production deploy, set Worker secrets:
+
+```bash
+wrangler secret put ADMIN_PASSWORD
+wrangler secret put CRYPTO_PAY_TOKEN
+```
+
+Optional Telegram bridge secrets:
+
+```bash
+wrangler secret put TELEGRAM_CODE_BRIDGE_URL
+wrangler secret put TELEGRAM_CODE_BRIDGE_TOKEN
 ```
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https%3A%2F%2Fgithub.com%2Fvorobevsvatoslav4-netizen%2FMilfa-Sell)

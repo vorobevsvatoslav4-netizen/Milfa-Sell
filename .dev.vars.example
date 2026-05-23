@@ -1,0 +1,5 @@
+ADMIN_PASSWORD=change-this-admin-password
+CRYPTO_PAY_TOKEN=change-this-crypto-pay-token
+# CRYPTO_PAY_API_URL=https://pay.crypt.bot/api
+# TELEGRAM_CODE_BRIDGE_URL=https://your-bridge.example.com/code
+# TELEGRAM_CODE_BRIDGE_TOKEN=change-this-bridge-token
