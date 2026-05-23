@@ -99,6 +99,13 @@ function normalizeEmail(value: unknown): string | null {
   return email && email.includes("@") ? email : null;
 }
 
+function normalizeUserId(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const id = value.trim().toLowerCase();
+  if (id.length < 3) return null;
+  return id.includes("@") ? normalizeEmail(id) : id;
+}
+
 function normalizeText(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value.trim() : fallback;
 }
@@ -291,7 +298,7 @@ function invoicePayload(invoice: CryptoPayInvoice): { email: string; amount: num
   if (typeof invoice.payload !== "string") return null;
   try {
     const payload = JSON.parse(invoice.payload) as { email?: unknown; amount?: unknown };
-    const email = normalizeEmail(payload.email);
+    const email = normalizeUserId(payload.email);
     const amount = Number(payload.amount);
     return email && Number.isFinite(amount) && amount > 0 ? { email, amount } : null;
   } catch {
@@ -469,14 +476,15 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
   if (request.method === "GET" && pathname === "/api/test") return ok({ name: "TeleVault API" });
 
   if (request.method === "POST" && pathname === "/api/auth/login") {
-    const email = normalizeEmail((await readJson(request)).email);
+    const body = await readJson(request);
+    const email = normalizeUserId(body.email ?? body.identifier);
     if (!email) return bad("Введите корректный email");
     return ok(await ensureUser(env, email));
   }
 
   const profilePurchases = pathname.match(/^\/api\/profile\/([^/]+)\/purchases$/);
   if (request.method === "GET" && profilePurchases) {
-    const email = normalizeEmail(decodeURIComponent(profilePurchases[1]));
+    const email = normalizeUserId(decodeURIComponent(profilePurchases[1]));
     if (!email) return bad("Некорректный email");
     const user = await ensureUser(env, email);
     const purchased: TelegramAccount[] = [];
@@ -498,7 +506,7 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
 
   const profile = pathname.match(/^\/api\/profile\/([^/]+)$/);
   if (request.method === "GET" && profile) {
-    const email = normalizeEmail(decodeURIComponent(profile[1]));
+    const email = normalizeUserId(decodeURIComponent(profile[1]));
     if (!email) return bad("Некорректный email");
     return ok(await ensureUser(env, email));
   }
@@ -514,7 +522,7 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
 
   if (request.method === "POST" && pathname === "/api/accounts/buy") {
     const body = await readJson(request);
-    const email = normalizeEmail(body.email);
+    const email = normalizeUserId(body.email);
     const accountId = body.accountId;
     if (!email || !isStr(accountId)) return bad("email and accountId required");
 
@@ -549,7 +557,7 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
 
   if (request.method === "POST" && pathname === "/api/payments/create-invoice") {
     const body = await readJson(request);
-    const email = normalizeEmail(body.email);
+    const email = normalizeUserId(body.email);
     const amount = Number(body.amount);
     if (!email || !Number.isFinite(amount) || amount < 1) return bad("Invalid payment request");
 
@@ -602,7 +610,7 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
   }
 
   if (request.method === "GET" && pathname === "/api/payments/verify-latest") {
-    const email = normalizeEmail(url.searchParams.get("email"));
+    const email = normalizeUserId(url.searchParams.get("email"));
     if (!email) return bad("email required");
     try {
       const [paidInvoices, activeInvoices] = await Promise.all([
@@ -656,7 +664,7 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
   const getCode = pathname.match(/^\/api\/accounts\/get-code\/([^/]+)$/);
   if (request.method === "GET" && getCode) {
     const accountId = decodeURIComponent(getCode[1]);
-    const email = normalizeEmail(url.searchParams.get("email"));
+    const email = normalizeUserId(url.searchParams.get("email"));
     const forceRefresh = url.searchParams.get("refresh") === "1" || url.searchParams.get("resend") === "1";
     if (!email) return bad("email required");
     const user = await ensureUser(env, email);
@@ -702,7 +710,7 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
 
   if (request.method === "POST" && pathname === "/api/admin/users/update-balance") {
     const body = await readJson(request);
-    const email = normalizeEmail(body.email);
+    const email = normalizeUserId(body.email);
     const amount = Number(body.amount);
     if (!email || !Number.isFinite(amount)) return bad("email and amount required");
 

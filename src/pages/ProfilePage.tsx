@@ -275,10 +275,11 @@ export function AuthPage() {
   const setUser = useUserStore((s) => s.setUser);
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (identifier.length < 3) { toast.error("Минимум 3 символа"); return; }
+    const loginId = identifier.trim();
+    if (loginId.length < 3) { toast.error("Минимум 3 символа"); return; }
     setLoading(true);
     try {
-      const user = await api<User>('/auth/login', { method: 'POST', body: JSON.stringify({ email: identifier }) });
+      const user = await api<User>('/auth/login', { method: 'POST', body: JSON.stringify({ email: loginId, identifier: loginId }) });
       setUser(user);
       toast.success('Вход выполнен');
       navigate('/profile');
