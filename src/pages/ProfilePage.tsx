@@ -34,6 +34,24 @@ const getFlagEmoji = (countryCode?: string) => {
   const codes: Record<string, string> = { 'US': '🇺🇸', 'GB': '🇬🇧', 'RU': '🇷🇺', 'NL': '🇳🇱', 'KZ': '🇰🇿' };
   return codes[countryCode || ''] || '🏳️';
 };
+const copyText = async (value: string, successMessage: string) => {
+  try {
+    await navigator.clipboard.writeText(value);
+    toast.success(successMessage);
+    return;
+  } catch {
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const copied = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    copied ? toast.success(successMessage) : toast.error('Не удалось скопировать');
+  }
+};
 export function ProfilePage() {
   const navigate = useNavigate();
   const [purchases, setPurchases] = useState<TelegramAccount[]>([]);
@@ -157,19 +175,17 @@ export function ProfilePage() {
                           <h4 className="text-lg font-black uppercase">{item.country} SESSION</h4>
                           <Badge className="bg-primary/10 text-primary uppercase text-[8px] tracking-widest">{CATEGORIES_RUS[item.category as keyof typeof CATEGORIES_RUS] || item.category}</Badge>
                           {item.phoneNumber && (
-                            <div className="mt-2 inline-flex max-w-full items-center gap-2 rounded-xl border border-border/60 bg-muted/40 px-3 py-1.5 text-foreground">
+                            <div className="mt-2 inline-flex max-w-full items-center gap-2 rounded-xl border border-border/60 bg-muted/40 p-1.5 pl-3 text-foreground">
                               <span className="truncate font-mono text-xs font-bold">{item.phoneNumber}</span>
                               <Button
                                 type="button"
                                 size="icon"
                                 variant="ghost"
-                                className="h-7 w-7 shrink-0 rounded-lg text-primary hover:bg-primary/10"
-                                onClick={() => {
-                                  navigator.clipboard.writeText(item.phoneNumber || '');
-                                  toast.success('Номер скопирован');
-                                }}
+                                className="h-9 w-9 shrink-0 rounded-lg text-primary hover:bg-primary/10"
+                                onClick={() => copyText(item.phoneNumber || '', 'Номер скопирован')}
+                                aria-label="Скопировать номер"
                               >
-                                <Copy className="h-3.5 w-3.5" />
+                                <Copy className="h-4 w-4" />
                               </Button>
                             </div>
                           )}
@@ -178,7 +194,7 @@ export function ProfilePage() {
                       {retrieved && retrieved.status === 'ready' ? (
                         <div className="p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] bg-primary/10 border border-primary/20 flex items-center justify-between gap-4">
                           <p className="text-3xl md:text-5xl font-display font-black text-primary tracking-widest break-all">{retrieved.code}</p>
-                          <Button className="rounded-xl h-12 w-12 bg-telegram" onClick={() => { navigator.clipboard.writeText(retrieved.code); toast.success('Код скопирован'); }} size="icon"><Copy className="h-5 w-5" /></Button>
+                          <Button className="rounded-xl h-12 w-12 bg-telegram" onClick={() => copyText(retrieved.code, 'Код скопирован')} size="icon"><Copy className="h-5 w-5" /></Button>
                         </div>
                       ) : (
                         <Button className="w-full h-12 md:h-14 rounded-xl md:rounded-2xl font-black bg-telegram shadow-lg gap-2" onClick={() => handleGetCode(item.id)} disabled={!!retrievingCodeId}>
