@@ -673,35 +673,40 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
     const accountEntity = new AccountEntity(env, accountId);
     if (!(await accountEntity.exists())) return notFound("Account not found");
     const account = await accountEntity.getState();
-    const lookup = await lookupLoginCode(env, account, email, forceRefresh);
-    if (lookup.code && (account.lastCode !== lookup.code || account.codeStatus !== "ready")) {
-      await accountEntity.save({
-        ...account,
-        lastCode: lookup.code,
-        codeStatus: "ready",
-        codeUpdatedAt: Date.now(),
-      });
-    } else if (!lookup.code && account.codeStatus !== lookup.status) {
-      await accountEntity.save({
-        ...account,
-        codeStatus: lookup.status,
-      });
-    }
-    return ok({
-      code: lookup.code || "Код не найден",
-      phoneNumber: account.phoneNumber,
-      message: lookup.message,
-      timestamp: Date.now(),
-      status: lookup.status,
-      metadata: {
-        dc_id: 2,
-        endpoint: account.phoneNumber || account.countryCode || "telegram",
-        protocol: lookup.source === "telegram_bridge" ? "Telethon Bridge" : "Saved Session Payload",
-        source: lookup.source,
-      },
-    });
-  }
+    
+    const sessionString = account.details; 
 
+    if (!sessionString) {
+        return new Response(JSON.stringify({ 
+            success: false, 
+            error: "Сессия не найдена в деталях аккаунта" 
+        }), { status: 400 });
+    }
+
+    try {
+        const VPS_URL = "http://138.16.163.140:3000/get-code";
+        const response = await fetch(`${VPS_URL}?session=${encodeURIComponent(sessionString)}`);
+        
+        if (!response.ok) {
+            return new Response(JSON.stringify({ 
+                success: false, 
+                error: "Сервер получения кодов не ответил" 
+            }), { status: 500 });
+        }
+
+        const result = await response.json();
+        
+        return new Response(JSON.stringify(result), {
+            headers: { "Content-Type": "application/json" },
+        });
+
+    } catch (e) {
+        return new Response(JSON.stringify({ 
+            success: false, 
+            error: "Ошибка связи с VPS сервером" 
+        }), { status: 500 });
+    }
+}
   const deleteAccount = pathname.match(/^\/api\/admin\/accounts\/([^/]+)$/);
   if (request.method === "DELETE" && deleteAccount) {
     const id = decodeURIComponent(deleteAccount[1]);
