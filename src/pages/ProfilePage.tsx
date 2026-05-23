@@ -214,7 +214,7 @@ export function ProfilePage() {
                           <Button className="rounded-xl h-12 w-12 bg-telegram" onClick={() => copyText(retrieved.code, 'Код скопирован')} size="icon"><Copy className="h-5 w-5" /></Button>
                         </div>
                       ) : (
-                        <Button className="w-full h-12 md:h-14 rounded-xl md:rounded-2xl font-black bg-telegram shadow-lg gap-2" onClick={() => handleGetCode(item.id)} disabled={!!retrievingCodeId}>
+                        <Button className="w-full h-12 md:h-14 rounded-xl md:rounded-2xl font-black bg-telegram shadow-lg gap-2" onClick={() => handleGetCode(item.id)} disabled={retrievingCodeId === item.id}>
                           {retrievingCodeId === item.id ? <Loader2 className="animate-spin" /> : <><Key className="h-4 w-4" /> ПОЛУЧИТЬ КОД</>}
                         </Button>
                       )}
