@@ -16,7 +16,7 @@ type RuntimeEnv = Env & {
   CRYPTO_PAY_API_URL?: string;
   TELEGRAM_CODE_BRIDGE_URL?: string;
   TELEGRAM_CODE_BRIDGE_TOKEN?: string;
-  STATIC_ASSETS: Fetcher;
+  ASSETS: Fetcher;
 };
 
 type CryptoPayInvoice = {
@@ -698,7 +698,7 @@ const __aureliaGeneratedWorker = {
     try {
       const url = new URL(request.url);
       if (url.pathname.startsWith("/api/")) return handleApi(request, env);
-      const assetResponse = await env.STATIC_ASSETS.fetch(request);
+      const assetResponse = await env.ASSETS.fetch(request);
       if (url.pathname.startsWith("/assets/") && assetResponse.headers.get("content-type")?.includes("text/html")) {
         return new Response("Asset not found", {
           status: 404,
