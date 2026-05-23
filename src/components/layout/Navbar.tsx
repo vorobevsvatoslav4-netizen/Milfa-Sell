@@ -76,7 +76,7 @@ function NavbarContent() {
         ))}
       </nav>
       <div className="flex shrink-0 items-center gap-2 md:gap-3">
-        <ThemeToggle className="relative top-0 right-0 rounded-xl h-10 w-10 border border-border bg-card/70 hover:bg-accent transition-colors" />
+        <ThemeToggle className="relative top-0 right-0 hidden rounded-xl h-10 w-10 border border-border bg-card/70 hover:bg-accent transition-colors lg:inline-flex" />
         {userExists ? (
           <div className="flex items-center gap-1.5 md:gap-2">
             <Link to="/profile" className="hidden xs:block">
@@ -106,7 +106,7 @@ function NavbarContent() {
       </div>
     </div>
     <nav className="lg:hidden fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-border/70 bg-background/95 px-2 py-2 shadow-2xl backdrop-blur-xl">
-      <div className="grid grid-cols-3 gap-1">
+      <div className="flex gap-1">
         {navItems.filter(item => !item.external).slice(0, 3).map((item) => {
           const Icon = item.icon || Home;
           return (
@@ -114,7 +114,7 @@ function NavbarContent() {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-black transition-colors",
+                "flex h-12 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-black transition-colors",
                 isActive(item.path) ? "bg-primary text-primary-foreground" : "text-muted-foreground"
               )}
             >
@@ -123,6 +123,9 @@ function NavbarContent() {
             </Link>
           );
         })}
+        <ThemeToggle
+          className="relative top-0 right-0 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-card/70 text-muted-foreground hover:bg-accent"
+        />
       </div>
     </nav>
     </>

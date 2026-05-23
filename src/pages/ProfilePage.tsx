@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription as UICardDesc
 import {
   Wallet, Eye, EyeOff,
   RefreshCcw, Copy, Loader2, Lock,
-  DollarSign, ExternalLink, Key, Sparkles
+  DollarSign, ExternalLink, Key, Sparkles, LogOut
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -66,6 +66,11 @@ export function ProfilePage() {
   const userEmail = useUserStore((state) => state.user?.email);
   const userBalance = useUserStore((state) => state.user?.balance ?? 0);
   const setUser = useUserStore((state) => state.setUser);
+  const logout = useUserStore((state) => state.logout);
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
   const fetchData = useCallback(async () => {
     if (!userEmail) return;
     try {
@@ -148,7 +153,19 @@ export function ProfilePage() {
           <Card className="rounded-2xl md:rounded-[2.5rem] bg-card/50 glass-effect border-white/5 overflow-hidden zen-shadow">
             <CardHeader className="text-center py-8 md:py-12">
               <div className="mx-auto h-14 w-14 md:h-16 md:w-16 rounded-2xl md:rounded-[1.5rem] bg-telegram flex items-center justify-center shadow-2xl mb-4"><Wallet className="h-7 w-7 md:h-8 md:w-8 text-white" /></div>
-              <CardTitle className="text-3xl md:text-4xl font-display font-black tracking-tighter">${Number(userBalance).toFixed(2)}</CardTitle>
+              <div className="flex items-center justify-center gap-3">
+                <CardTitle className="text-3xl md:text-4xl font-display font-black tracking-tighter">${Number(userBalance).toFixed(2)}</CardTitle>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={handleLogout}
+                  className="h-11 w-11 rounded-xl border-border bg-card/70 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  aria-label="Выйти"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
               <UICardDescription className="text-[10px] font-mono opacity-40 mt-3 truncate px-4">{userEmail}</UICardDescription>
             </CardHeader>
             <CardContent className="px-5 md:px-6 pb-7 md:pb-10 space-y-3">
