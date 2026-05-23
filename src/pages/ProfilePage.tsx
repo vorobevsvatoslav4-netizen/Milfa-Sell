@@ -125,17 +125,17 @@ export function ProfilePage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="h-12 w-12 animate-spin opacity-20" /></div>;
   return (
     <AppLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-4 space-y-6">
-          <Card className="rounded-[2.5rem] bg-card/50 glass-effect border-white/5 overflow-hidden zen-shadow">
-            <CardHeader className="text-center py-12">
-              <div className="mx-auto h-16 w-16 rounded-[1.5rem] bg-telegram flex items-center justify-center shadow-2xl mb-4"><Wallet className="h-8 w-8 text-white" /></div>
-              <CardTitle className="text-4xl font-display font-black tracking-tighter">${Number(userBalance).toFixed(2)}</CardTitle>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-8">
+        <div className="lg:col-span-4 space-y-5 md:space-y-6">
+          <Card className="rounded-2xl md:rounded-[2.5rem] bg-card/50 glass-effect border-white/5 overflow-hidden zen-shadow">
+            <CardHeader className="text-center py-8 md:py-12">
+              <div className="mx-auto h-14 w-14 md:h-16 md:w-16 rounded-2xl md:rounded-[1.5rem] bg-telegram flex items-center justify-center shadow-2xl mb-4"><Wallet className="h-7 w-7 md:h-8 md:w-8 text-white" /></div>
+              <CardTitle className="text-3xl md:text-4xl font-display font-black tracking-tighter">${Number(userBalance).toFixed(2)}</CardTitle>
               <UICardDescription className="text-[10px] font-mono opacity-40 mt-3 truncate px-4">{userEmail}</UICardDescription>
             </CardHeader>
-            <CardContent className="px-6 pb-10 space-y-3">
-              <Button className="w-full rounded-2xl h-14 text-lg font-black bg-telegram shadow-xl" onClick={() => setShowTopUpDialog(true)}>Пополнить</Button>
-              <Button variant="outline" className="w-full rounded-2xl h-12 border-primary/20 text-primary font-bold" onClick={handleVerifyPayment} disabled={verifying}>
+            <CardContent className="px-5 md:px-6 pb-7 md:pb-10 space-y-3">
+              <Button className="w-full rounded-xl md:rounded-2xl h-12 md:h-14 text-base md:text-lg font-black bg-telegram shadow-xl" onClick={() => setShowTopUpDialog(true)}>Пополнить</Button>
+              <Button variant="outline" className="w-full rounded-xl md:rounded-2xl h-12 border-primary/20 text-primary font-bold" onClick={handleVerifyPayment} disabled={verifying}>
                 {verifying ? <Loader2 className="animate-spin mr-2" /> : <RefreshCcw className="h-4 w-4 mr-2" />} Проверить оплату
               </Button>
             </CardContent>
@@ -149,39 +149,51 @@ export function ProfilePage() {
                 const retrieved = retrievedCodes[item.id];
                 const isRevealed = revealedIds.has(item.id);
                 return (
-                  <Card key={item.id} className="border-white/5 bg-card/50 glass-effect rounded-[2rem] overflow-hidden zen-shadow p-8 flex flex-col md:flex-row gap-8">
-                    <div className="flex-1 space-y-6">
+                  <Card key={item.id} className="border-white/5 bg-card/50 glass-effect rounded-2xl md:rounded-[2rem] overflow-hidden zen-shadow p-5 md:p-8 flex flex-col md:flex-row gap-5 md:gap-8">
+                    <div className="flex-1 space-y-5 md:space-y-6 min-w-0">
                       <div className="flex items-center gap-4">
-                        <span className="text-4xl">{getFlagEmoji(item.countryCode)}</span>
+                        <span className="text-3xl md:text-4xl">{getFlagEmoji(item.countryCode)}</span>
                         <div>
                           <h4 className="text-lg font-black uppercase">{item.country} SESSION</h4>
                           <Badge className="bg-primary/10 text-primary uppercase text-[8px] tracking-widest">{CATEGORIES_RUS[item.category as keyof typeof CATEGORIES_RUS] || item.category}</Badge>
                           {item.phoneNumber && (
-                            <p className="mt-2 inline-flex rounded-xl border border-border/60 bg-muted/40 px-3 py-1.5 font-mono text-xs font-bold text-foreground">
-                              {item.phoneNumber}
-                            </p>
+                            <div className="mt-2 inline-flex max-w-full items-center gap-2 rounded-xl border border-border/60 bg-muted/40 px-3 py-1.5 text-foreground">
+                              <span className="truncate font-mono text-xs font-bold">{item.phoneNumber}</span>
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="ghost"
+                                className="h-7 w-7 shrink-0 rounded-lg text-primary hover:bg-primary/10"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(item.phoneNumber || '');
+                                  toast.success('Номер скопирован');
+                                }}
+                              >
+                                <Copy className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
                           )}
                         </div>
                       </div>
                       {retrieved && retrieved.status === 'ready' ? (
-                        <div className="p-6 rounded-[1.5rem] bg-primary/10 border border-primary/20 flex items-center justify-between">
-                          <p className="text-5xl font-display font-black text-primary tracking-widest">{retrieved.code}</p>
+                        <div className="p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] bg-primary/10 border border-primary/20 flex items-center justify-between gap-4">
+                          <p className="text-3xl md:text-5xl font-display font-black text-primary tracking-widest break-all">{retrieved.code}</p>
                           <Button className="rounded-xl h-12 w-12 bg-telegram" onClick={() => { navigator.clipboard.writeText(retrieved.code); toast.success('Код скопирован'); }} size="icon"><Copy className="h-5 w-5" /></Button>
                         </div>
                       ) : (
-                        <Button className="w-full h-14 rounded-2xl font-black bg-telegram shadow-lg gap-2" onClick={() => handleGetCode(item.id)} disabled={!!retrievingCodeId}>
+                        <Button className="w-full h-12 md:h-14 rounded-xl md:rounded-2xl font-black bg-telegram shadow-lg gap-2" onClick={() => handleGetCode(item.id)} disabled={!!retrievingCodeId}>
                           {retrievingCodeId === item.id ? <Loader2 className="animate-spin" /> : <><Key className="h-4 w-4" /> ПОЛУЧИТЬ КОД</>}
                         </Button>
                       )}
                     </div>
-                    <div className="w-full md:w-[240px] bg-black/10 rounded-2xl p-6 space-y-3">
+                    <div className="w-full md:w-[240px] bg-black/10 rounded-2xl p-4 md:p-6 space-y-3">
                       <div className="flex justify-between items-center">
                         <label className="text-[9px] font-black uppercase opacity-40">Payload</label>
                         <button onClick={() => { const next = new Set(revealedIds); if(next.has(item.id)) next.delete(item.id); else next.add(item.id); setRevealedIds(next); }} className="text-primary">
                           {isRevealed ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
-                      <div className={cn("text-[8px] font-mono break-all max-h-[80px] overflow-auto", !isRevealed && "blur-xl opacity-10")}>
+                      <div className={cn("text-[9px] md:text-[8px] font-mono break-all max-h-[96px] md:max-h-[80px] overflow-auto", !isRevealed && "blur-xl opacity-10")}>
                         {item.details || "Нет данных"}
                       </div>
                     </div>
@@ -190,7 +202,7 @@ export function ProfilePage() {
               })}
             </div>
           ) : (
-            <div className="py-20 text-center rounded-[2.5rem] border-2 border-dashed border-white/5 bg-card/50">
+            <div className="py-16 md:py-20 text-center rounded-2xl md:rounded-[2.5rem] border-2 border-dashed border-white/5 bg-card/50">
               <Sparkles className="h-12 w-12 text-primary/20 mx-auto mb-4" />
               <p className="text-muted-foreground font-medium mb-6">Инвентарь пуст.</p>
               <Link to="/store"><Button className="rounded-full px-10 h-14 font-black bg-telegram shadow-2xl">В МАГАЗИН</Button></Link>

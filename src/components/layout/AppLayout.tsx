@@ -10,7 +10,7 @@ export function AppLayout({ children, container = true }: AppLayoutProps): JSX.E
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans selection:bg-primary/30">
       <Navbar />
-      <main className={`flex-1 ${container ? "container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10" : ""}`}>
+      <main className={`flex-1 ${container ? "container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 pb-24 md:py-10" : "pb-24 md:pb-0"}`}>
         {children}
       </main>
       <footer className="py-8 bg-black/[0.01] border-t border-border/5 mt-auto">

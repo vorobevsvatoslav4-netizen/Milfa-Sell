@@ -98,36 +98,36 @@ export function StorePage() {
   }, [accounts, filter, search]);
   return (
     <AppLayout>
-      <div className="flex flex-col space-y-10 mb-16 max-w-7xl mx-auto px-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-3">
+      <div className="flex flex-col space-y-6 md:space-y-10 mb-16 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
+          <div className="space-y-2 md:space-y-3">
             <h1 className="text-3xl md:text-5xl font-display font-black tracking-tight">Маркетплейс</h1>
             <p className="text-muted-foreground text-sm sm:text-lg font-medium opacity-80">Качественные сессии для безопасной работы.</p>
           </div>
           {hasUser && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-5 glass-effect p-6 rounded-[2rem] zen-shadow">
-              <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary"><Wallet className="h-6 w-6" /></div>
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4 glass-effect p-4 md:p-6 rounded-2xl md:rounded-[2rem] zen-shadow">
+              <div className="h-11 w-11 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-primary/20 flex items-center justify-center text-primary"><Wallet className="h-5 w-5 md:h-6 md:w-6" /></div>
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Баланс</p>
-                <p className="text-2xl font-display font-black text-primary text-glow">${Number(userBalance).toFixed(2)}</p>
+                <p className="text-xl md:text-2xl font-display font-black text-primary text-glow">${Number(userBalance).toFixed(2)}</p>
               </div>
             </motion.div>
           )}
         </div>
-        <div className="flex flex-col sm:flex-row gap-5">
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-5">
           <div className="relative group flex-1">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input
               placeholder="Поиск по стране..."
-              className="pl-14 h-14 rounded-2xl bg-white/[0.03] border-border text-lg"
+              className="pl-12 md:pl-14 h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/[0.03] border-border text-base md:text-lg"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            <Button variant={filter === 'All' ? "default" : "outline"} onClick={() => setFilter('All')} className={cn("rounded-2xl px-6 h-14 font-bold shrink-0", filter === 'All' ? "bg-telegram text-white" : "bg-card")}>Все</Button>
+            <Button variant={filter === 'All' ? "default" : "outline"} onClick={() => setFilter('All')} className={cn("rounded-xl md:rounded-2xl px-4 md:px-6 h-11 md:h-14 font-bold shrink-0", filter === 'All' ? "bg-telegram text-white" : "bg-card")}>Все</Button>
             {Object.entries(CATEGORIES_RUS).filter(([k]) => k !== 'All').map(([k, v]) => (
-              <Button key={k} variant={filter === k ? "default" : "outline"} onClick={() => setFilter(k)} className={cn("rounded-2xl px-6 h-14 font-bold shrink-0", filter === k ? "bg-telegram text-white" : "bg-card")}>{v}</Button>
+              <Button key={k} variant={filter === k ? "default" : "outline"} onClick={() => setFilter(k)} className={cn("rounded-xl md:rounded-2xl px-4 md:px-6 h-11 md:h-14 font-bold shrink-0", filter === k ? "bg-telegram text-white" : "bg-card")}>{v}</Button>
             ))}
           </div>
         </div>
@@ -140,30 +140,30 @@ export function StorePage() {
             <AnimatePresence mode="popLayout">
               {filteredAccounts.map((acc) => (
                 <motion.div key={acc.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
-                  <Card className="h-full flex flex-col border-border hover:border-primary/40 transition-all duration-500 rounded-[2.5rem] overflow-hidden bg-card shadow-md">
-                    <CardHeader className="p-8">
-                      <div className="flex justify-between items-start mb-6">
+                  <Card className="h-full flex flex-col border-border hover:border-primary/40 transition-all duration-500 rounded-2xl md:rounded-[2.5rem] overflow-hidden bg-card shadow-md">
+                    <CardHeader className="p-5 md:p-8">
+                      <div className="flex justify-between items-start mb-4 md:mb-6 gap-4">
                         <div className="flex items-center gap-4">
-                          <span className="text-4xl">{getFlagEmoji(acc.countryCode)}</span>
+                          <span className="text-3xl md:text-4xl">{getFlagEmoji(acc.countryCode)}</span>
                           <Badge className="bg-primary/10 text-primary font-black uppercase text-[10px] tracking-widest">{CATEGORIES_RUS[acc.category as keyof typeof CATEGORIES_RUS] || acc.category}</Badge>
                         </div>
-                        <div className="text-3xl font-display font-black text-primary text-glow">${Number(acc.price).toFixed(2)}</div>
+                        <div className="text-2xl md:text-3xl font-display font-black text-primary text-glow">${Number(acc.price).toFixed(2)}</div>
                       </div>
-                      <CardTitle className="text-2xl font-black">Telegram Account</CardTitle>
+                      <CardTitle className="text-xl md:text-2xl font-black">Telegram Account</CardTitle>
                     </CardHeader>
-                    <CardContent className="px-8 space-y-6 flex-1">
-                      <div className="flex gap-3">
-                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-muted/50 px-4 py-2.5 rounded-xl border border-border"><Globe className="h-3.5 w-3.5 text-primary" />{acc.country}</div>
-                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-muted/50 px-4 py-2.5 rounded-xl border border-border"><Clock className="h-3.5 w-3.5 text-primary" />{acc.age}</div>
+                    <CardContent className="px-5 md:px-8 space-y-4 md:space-y-6 flex-1">
+                      <div className="flex flex-wrap gap-2 md:gap-3">
+                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-muted/50 px-3 md:px-4 py-2 rounded-xl border border-border"><Globe className="h-3.5 w-3.5 text-primary" />{acc.country}</div>
+                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-muted/50 px-3 md:px-4 py-2 rounded-xl border border-border"><Clock className="h-3.5 w-3.5 text-primary" />{acc.age}</div>
                       </div>
                       {acc.description && (
-                        <p className="rounded-2xl border border-border/60 bg-muted/30 p-4 text-sm leading-6 text-muted-foreground break-words">
+                        <p className="rounded-xl md:rounded-2xl border border-border/60 bg-muted/30 p-3 md:p-4 text-sm leading-6 text-muted-foreground break-words">
                           {acc.description}
                         </p>
                       )}
                     </CardContent>
-                    <CardFooter className="p-8">
-                      <Button className="w-full h-16 rounded-2xl text-lg font-black bg-telegram text-white shadow-xl hover:scale-[1.02]" onClick={() => { if (!hasUser) { toast.error('Нужна авторизация'); navigate('/auth'); return; } setConfirmAccount(acc); }} disabled={buyingId === acc.id}>
+                    <CardFooter className="p-5 md:p-8">
+                      <Button className="w-full h-12 md:h-16 rounded-xl md:rounded-2xl text-base md:text-lg font-black bg-telegram text-white shadow-xl hover:scale-[1.02]" onClick={() => { if (!hasUser) { toast.error('Нужна авторизация'); navigate('/auth'); return; } setConfirmAccount(acc); }} disabled={buyingId === acc.id}>
                         {buyingId === acc.id ? <Loader2 className="animate-spin" /> : <><ShoppingCart className="mr-3 h-5 w-5" /> Купить</>}
                       </Button>
                     </CardFooter>

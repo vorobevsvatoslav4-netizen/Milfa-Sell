@@ -506,7 +506,10 @@ async function handleApi(request: Request, env: RuntimeEnv): Promise<Response> {
   if (request.method === "GET" && pathname === "/api/accounts") {
     await AccountEntity.ensureSeed(env);
     const page = await AccountEntity.list(env, url.searchParams.get("cursor"), pageLimit(url.searchParams.get("limit")));
-    return ok(page);
+    return ok({
+      ...page,
+      items: page.items.filter((account) => account.status === "available"),
+    });
   }
 
   if (request.method === "POST" && pathname === "/api/accounts/buy") {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link, useLocation, useNavigate, useInRouterContext } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Shield, LogOut, User as UserIcon, ShoppingBag, MessageCircle } from 'lucide-react';
+import { Home, Shield, LogOut, User as UserIcon, ShoppingBag, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { motion } from 'framer-motion';
@@ -21,12 +21,13 @@ function NavbarContent() {
     navigate('/');
   };
   const navItems = React.useMemo(() => [
-    { name: 'Главная', path: '/' },
+    { name: 'Главная', path: '/', icon: Home },
     { name: 'Магазин', path: '/store', icon: ShoppingBag },
     ...(userExists ? [{ name: 'Профиль', path: '/profile', icon: UserIcon }] : []),
     { name: 'Поддержка', path: APP_CONFIG.supportLink, external: true, icon: MessageCircle },
   ], [userExists]);
   return (
+    <>
     <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
       <Link to="/" className="flex items-center gap-2 md:gap-3 group shrink-0">
         <motion.div
@@ -103,6 +104,27 @@ function NavbarContent() {
         )}
       </div>
     </div>
+    <nav className="lg:hidden fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-border/70 bg-background/95 px-2 py-2 shadow-2xl backdrop-blur-xl">
+      <div className="grid grid-cols-3 gap-1">
+        {navItems.filter(item => !item.external).slice(0, 3).map((item) => {
+          const Icon = item.icon || Home;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={cn(
+                "flex h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-black transition-colors",
+                isActive(item.path) ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              {item.name}
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+    </>
   );
 }
 function NavbarFallback() {

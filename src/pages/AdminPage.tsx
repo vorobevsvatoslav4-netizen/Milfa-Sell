@@ -254,22 +254,22 @@ export function AdminPage() {
             <Button variant="outline" onClick={handleLogout} className="rounded-xl h-12 font-bold px-6">Выйти</Button>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <Card className="glass-effect rounded-[2.5rem] p-8 border-white/5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+          <Card className="glass-effect rounded-2xl md:rounded-[2.5rem] p-5 md:p-8 border-white/5">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-400"><Users className="h-6 w-6" /></div>
               <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Users</span>
             </div>
             <p className="text-4xl font-display font-black">{stats.users}</p>
           </Card>
-          <Card className="glass-effect rounded-[2.5rem] p-8 border-white/5">
+          <Card className="glass-effect rounded-2xl md:rounded-[2.5rem] p-5 md:p-8 border-white/5">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-3 rounded-2xl bg-green-500/10 text-green-400"><DollarSign className="h-6 w-6" /></div>
               <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Capital</span>
             </div>
             <p className="text-4xl font-display font-black text-primary">${stats.balance.toFixed(2)}</p>
           </Card>
-          <Card className="glass-effect rounded-[2.5rem] p-8 border-white/5">
+          <Card className="glass-effect rounded-2xl md:rounded-[2.5rem] p-5 md:p-8 border-white/5">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-400"><Package className="h-6 w-6" /></div>
               <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Stock</span>
@@ -277,16 +277,16 @@ export function AdminPage() {
             <p className="text-4xl font-display font-black">{stats.inventory}</p>
           </Card>
         </div>
-        <Tabs defaultValue="inventory" className="space-y-8">
-          <TabsList className="bg-white/[0.02] border-white/5 rounded-2xl h-14 p-1">
-            <TabsTrigger value="inventory" className="rounded-xl px-8 font-black uppercase text-xs tracking-widest">Stock</TabsTrigger>
-            <TabsTrigger value="users" className="rounded-xl px-8 font-black uppercase text-xs tracking-widest">Users</TabsTrigger>
-            <TabsTrigger value="transactions" className="rounded-xl px-8 font-black uppercase text-xs tracking-widest">Log</TabsTrigger>
+        <Tabs defaultValue="inventory" className="space-y-6 md:space-y-8">
+          <TabsList className="w-full justify-start overflow-x-auto bg-white/[0.02] border-white/5 rounded-2xl h-12 md:h-14 p-1 scrollbar-hide">
+            <TabsTrigger value="inventory" className="rounded-xl px-5 md:px-8 font-black uppercase text-xs tracking-widest">Stock</TabsTrigger>
+            <TabsTrigger value="users" className="rounded-xl px-5 md:px-8 font-black uppercase text-xs tracking-widest">Users</TabsTrigger>
+            <TabsTrigger value="transactions" className="rounded-xl px-5 md:px-8 font-black uppercase text-xs tracking-widest">Log</TabsTrigger>
           </TabsList>
           <TabsContent value="inventory" className="space-y-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
               <div className="lg:col-span-5">
-                <Card className="glass-effect rounded-[2rem] p-8 border-white/5 sticky top-24">
+                <Card className="glass-effect rounded-2xl md:rounded-[2rem] p-5 md:p-8 border-white/5 sticky top-24">
                   <h3 className="text-xl font-black mb-6 flex items-center gap-3">
                     <Plus className="h-6 w-6 text-primary" /> New Item
                   </h3>
@@ -343,10 +343,10 @@ export function AdminPage() {
               </div>
               <div className="lg:col-span-7 space-y-4">
                 {accounts.map(acc => (
-                  <Card key={acc.id} className="p-6 border-white/5 bg-white/[0.01] glass-effect rounded-3xl flex justify-between items-center group">
-                    <div className="flex items-center gap-6">
+                  <Card key={acc.id} className="p-5 md:p-6 border-white/5 bg-white/[0.01] glass-effect rounded-2xl md:rounded-3xl flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 group">
+                    <div className="flex items-center gap-4 md:gap-6 min-w-0">
                       <span className="text-3xl">{getFlagEmoji(acc.countryCode)}</span>
-                      <div>
+                      <div className="min-w-0">
                         <p className="font-bold">{acc.country}</p>
                         {acc.phoneNumber && <p className="text-xs text-muted-foreground font-mono">{acc.phoneNumber}</p>}
                         {acc.description && <p className="text-[10px] text-muted-foreground/70 max-w-[280px] truncate">{acc.description}</p>}
@@ -355,7 +355,7 @@ export function AdminPage() {
                         </Badge>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                       <p className="text-xl font-display font-black text-primary">${Number(acc.price).toFixed(2)}</p>
                       <Button variant="ghost" size="icon" onClick={() => handleDeleteAccount(acc.id)} className="h-10 w-10 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl">
                         <Trash2 className="h-5 w-5" />
@@ -368,15 +368,15 @@ export function AdminPage() {
           </TabsContent>
           <TabsContent value="users" className="space-y-4">
             {users.map(u => (
-              <Card key={u.id} className="p-6 border-white/5 bg-white/[0.01] glass-effect rounded-3xl flex justify-between items-center">
-                <div className="flex items-center gap-4">
+              <Card key={u.id} className="p-5 md:p-6 border-white/5 bg-white/[0.01] glass-effect rounded-2xl md:rounded-3xl flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <div className="flex items-center gap-4 min-w-0">
                   <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary"><Users className="h-6 w-6" /></div>
                   <div>
                     <p className="font-black">{u.email}</p>
                     <p className="text-[10px] opacity-40 uppercase tracking-widest">{u.id?.slice(0, 12)}...</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-6">
+                <div className="flex items-center justify-between sm:justify-end gap-4 md:gap-6 w-full sm:w-auto">
                   {editingUserId === u.id ? (
                     <div className="flex items-center gap-2">
                       <Input
@@ -409,8 +409,8 @@ export function AdminPage() {
           </TabsContent>
           <TabsContent value="transactions" className="space-y-4">
             {transactions.map(t => (
-              <Card key={t.id} className="p-6 border-white/5 bg-white/[0.01] glass-effect rounded-3xl flex justify-between items-center">
-                <div className="flex items-center gap-4">
+              <Card key={t.id} className="p-5 md:p-6 border-white/5 bg-white/[0.01] glass-effect rounded-2xl md:rounded-3xl flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <div className="flex items-center gap-4 min-w-0">
                   <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center", t.type === 'deposit' ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400")}>
                     {t.type === 'deposit' ? <TrendingUp className="h-6 w-6" /> : <Package className="h-6 w-6" />}
                   </div>
@@ -419,7 +419,7 @@ export function AdminPage() {
                     <p className="text-[10px] opacity-40 uppercase">{new Date(t.timestamp).toLocaleString()}</p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-left sm:text-right w-full sm:w-auto">
                   <p className={cn("text-2xl font-display font-black", t.type === 'deposit' ? "text-green-400" : "text-red-400")}>
                     {t.type === 'deposit' ? '+' : '-'}${Number(t.amount).toFixed(2)}
                   </p>
